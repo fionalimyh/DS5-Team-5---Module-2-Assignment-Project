@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: kaggle_data              # You can name this source anything you want to reference in dbt
+    database: our-project-93971  # This is the actual GCP Project ID where the data lives
+    schema: kaggle_data       # This is the BigQuery dataset folder created
+    tables:
+      - name: order_items
+      - name: products
+
+
+#The source is declared in models/sources.yml. 
+#It points to the public BigQuery dataset kaggle_data. 
+#This is the raw data you are transforming — you do not own it, you only read from it. 

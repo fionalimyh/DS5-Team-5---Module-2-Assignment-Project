@@ -1,0 +1,16 @@
+# This schema test for dimensional tables
+
+
+
+version: 2
+
+models:
+  - name: dim1_tbc
+    description: "first dimensional table"
+    columns:
+      - name: id
+        description: "The primary key for this table"
+        data_tests:
+          - unique
+          - not_null
+
