@@ -1,0 +1,58 @@
+version: 2
+
+models:
+  - name: dq_orders
+    description: "Flagged order rows. Empty table means clean data."
+    columns:
+      - name: order_id
+        tests: [not_null]
+      - name: issues
+        tests: [not_null]
+
+  - name: dq_customers
+    description: "Flagged customer rows."
+    columns:
+      - name: issues
+        tests: [not_null]
+
+  - name: dq_order_items
+    description: "Flagged order item rows."
+    columns:
+      - name: issues
+        tests: [not_null]
+
+  - name: dq_order_payments
+    description: "Flagged payment rows."
+    columns:
+      - name: issues
+        tests: [not_null]
+
+  - name: dq_order_reviews
+    description: "Flagged review rows."
+    columns:
+      - name: issues
+        tests: [not_null]
+
+  - name: dq_products
+    description: "Flagged product rows."
+    columns:
+      - name: issues
+        tests: [not_null]
+
+  - name: dq_sellers
+    description: "Flagged seller rows."
+    columns:
+      - name: issues
+        tests: [not_null]
+
+  - name: dq_geolocation
+    description: "Flagged geolocation rows."
+    columns:
+      - name: issues
+        tests: [not_null]
+
+  - name: dq_category_name_translation
+    description: "Flagged category translation rows."
+    columns:
+      - name: issues
+        tests: [not_null]

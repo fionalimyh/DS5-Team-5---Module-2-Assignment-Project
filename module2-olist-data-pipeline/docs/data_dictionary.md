@@ -217,6 +217,50 @@ Stores English translations for product category names.
 
 ---
 
+---
+
+## Staging Layer Column Mapping (olist_dev_staging)
+
+Staging views rename columns for consistency and cast data types. No rows are removed.
+
+| Raw column | Staging column | Type change | Table |
+|---|---|---|---|
+| `order_purchase_timestamp` | `purchase_at` | STRING → TIMESTAMP | stg_orders |
+| `order_approved_at` | `approved_at` | STRING → TIMESTAMP | stg_orders |
+| `order_delivered_carrier_date` | `delivered_carrier_at` | STRING → TIMESTAMP | stg_orders |
+| `order_delivered_customer_date` | `delivered_customer_at` | STRING → TIMESTAMP | stg_orders |
+| `order_estimated_delivery_date` | `estimated_delivery_at` | STRING → TIMESTAMP | stg_orders |
+| `customer_zip_code_prefix` | `zip_code_prefix` | INT → STRING | stg_customers |
+| `customer_city` | `city` | — | stg_customers |
+| `customer_state` | `state` | — | stg_customers |
+| `shipping_limit_date` | `shipping_limit_at` | STRING → TIMESTAMP | stg_order_items |
+| `price` | `price` | STRING → FLOAT64 | stg_order_items |
+| `freight_value` | `freight_value` | STRING → FLOAT64 | stg_order_items |
+| `payment_value` | `payment_value` | STRING → FLOAT64 | stg_order_payments |
+| `review_score` | `review_score` | STRING → INT64 | stg_order_reviews |
+| `review_comment_title` | `review_comment_title` | empty string → NULL | stg_order_reviews |
+| `review_comment_message` | `review_comment_message` | empty string → NULL | stg_order_reviews |
+| `review_creation_date` | `review_created_at` | STRING → TIMESTAMP | stg_order_reviews |
+| `review_answer_timestamp` | `review_answered_at` | STRING → TIMESTAMP | stg_order_reviews |
+| `product_name_lenght` | `name_length` | STRING → INT64 | stg_products |
+| `product_description_lenght` | `description_length` | STRING → INT64 | stg_products |
+| `product_photos_qty` | `photos_qty` | STRING → INT64 | stg_products |
+| `product_weight_g` | `weight_g` | STRING → INT64 | stg_products |
+| `product_length_cm` | `length_cm` | STRING → INT64 | stg_products |
+| `product_height_cm` | `height_cm` | STRING → INT64 | stg_products |
+| `product_width_cm` | `width_cm` | STRING → INT64 | stg_products |
+| `seller_zip_code_prefix` | `zip_code_prefix` | INT → STRING | stg_sellers |
+| `seller_city` | `city` | — | stg_sellers |
+| `seller_state` | `state` | — | stg_sellers |
+| `geolocation_zip_code_prefix` | `zip_code_prefix` | INT → STRING | stg_geolocation |
+| `geolocation_lat` | `lat` | STRING → FLOAT64 | stg_geolocation |
+| `geolocation_lng` | `lng` | STRING → FLOAT64 | stg_geolocation |
+| `geolocation_city` | `city` | — | stg_geolocation |
+| `geolocation_state` | `state` | — | stg_geolocation |
+| `product_category_name_english` | `category_name_english` | — | stg_category_name_translation |
+
+---
+
 ## Initial Relationship Map
 
 ```text
