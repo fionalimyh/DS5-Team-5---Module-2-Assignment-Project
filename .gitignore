@@ -1,0 +1,35 @@
+# Environment & secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+*.json.key
+gcp_json*.json
+*credentials*.json
+*service_account*.json
+*serviceaccount*.json
+
+# dbt
+logs/
+target/
+dbt_packages/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Claude Code
+.claude/settings.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Zone identifier files (Windows/WSL artefacts)
+*:Zone.Identifier
