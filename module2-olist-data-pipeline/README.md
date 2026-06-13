@@ -5,7 +5,7 @@
 
 ## 1. Project Overview
 
-This project builds an end-to-end ELT data pipeline for the Olist Brazilian E-Commerce dataset using GCP BigQuery and dbt. Raw CSV data is loaded into BigQuery, transformed through three dbt layers (staging → data quality → star schema), and analysed in Jupyter notebooks.
+This project builds an end-to-end ELT data pipeline for the Olist Brazilian E-Commerce dataset. Raw CSV files are imported into Supabase (PostgreSQL), extracted by Meltano and loaded into GCP BigQuery, transformed through three dbt layers (staging → data quality → star schema), and analysed in Jupyter notebooks.
 
 **Status:** Pipeline complete — 24 dbt models built, 53 tests passing.
 
@@ -29,8 +29,10 @@ This project creates a structured data warehouse to support analysis on:
 
 ```
 Kaggle CSVs (9 files)
-    ↓ bq load
-BigQuery: our-project-93971.kaggle_data   ← raw, untouched
+    ↓ import via Supabase UI / CSV upload
+Supabase PostgreSQL (public.sb_* tables)
+    ↓ Meltano  tap-postgres → target-bigquery
+BigQuery: our-project-93971.Supabase_data (public_sb_* tables)
     ↓ dbt run
 olist_dev_staging     (views)             ← Layer 1: rename, cast, standardise
     ↓                      ↓
@@ -47,21 +49,21 @@ See [`docs/architecture.md`](docs/architecture.md) for the full design.
 ## 4. Dataset
 
 **Source:** Brazilian E-Commerce Public Dataset by Olist (Kaggle)
-**Loaded into:** `our-project-93971.kaggle_data` (BigQuery)
+**Loaded into:** Supabase PostgreSQL → `our-project-93971.Supabase_data` (BigQuery via Meltano)
 
-| Table | Rows |
+| BigQuery table (Supabase_data) | Rows |
 |---|---:|
-| orders | 99,441 |
-| customers | 99,441 |
-| order_items | 112,650 |
-| order_payments | 103,886 |
-| order_reviews | 99,224 |
-| products | 32,951 |
-| sellers | 3,095 |
-| geolocation | 1,000,163 |
-| category_name_translation | 71 |
+| public_sb_orders_dataset | 99,441 |
+| public_sb_customers_dataset | 99,441 |
+| public_sb_order_items_dataset | 112,650 |
+| public_sb_order_payments_dataset | 103,886 |
+| public_sb_order_reviews_dataset | 99,224 |
+| public_sb_products_dataset | 32,951 |
+| public_sb_sellers_dataset | 3,095 |
+| public_sb_geolocation_dataset | 1,000,163 |
+| public_sb_product_category_name_translation | 71 |
 
-All 9 tables verified to match local CSVs exactly.
+All 9 tables loaded from Supabase via Meltano (tap-postgres → target-bigquery).
 
 ---
 
@@ -69,9 +71,10 @@ All 9 tables verified to match local CSVs exactly.
 
 **Project:** `our_project`
 **Profile:** `our_project` → BigQuery (`our-project-93971`), oauth, location: US
+**Source dataset:** `Supabase_data` (tables populated by Meltano)
 
 ### Layer 1 — Staging (`olist_dev_staging`)
-9 views. One per source table. Renames columns, casts data types, standardises nulls. No rows removed.
+9 views. One per source table. Reads from `Supabase_data.public_sb_*`, renames columns, casts data types, standardises nulls. No rows removed.
 
 | Model | Key changes |
 |---|---|
@@ -122,16 +125,33 @@ See [`docs/schema_design.md`](docs/schema_design.md) for column definitions and 
 
 **Prerequisites:** conda env `elt` with dbt-bigquery, GCP credentials via `gcloud auth application-default login`.
 
+### Step 1 — Load CSVs into Supabase
+Import the 9 Olist CSV files into Supabase PostgreSQL as `public.sb_*` tables via the Supabase dashboard (Table Editor → Import CSV).
+
+### Step 2 — Extract from Supabase and load into BigQuery (Meltano)
+
+```bash
+cd meltano-supabase
+
+# Set Supabase password, then run the ELT job
+export TAP_POSTGRES_PASSWORD=<supabase_password>
+meltano run tap-postgres target-bigquery
+```
+
+Loads all 9 tables into `our-project-93971.Supabase_data` as `public_sb_*`.
+
+### Step 3 — Transform with dbt
+
 ```bash
 cd our_project
 
-# 1. Verify connection
+# Verify connection
 /home/fionalyh/miniconda3/envs/elt/bin/dbt debug
 
-# 2. Build all models
+# Build all models (staging → data_quality → star)
 /home/fionalyh/miniconda3/envs/elt/bin/dbt run
 
-# 3. Run all tests
+# Run all tests
 /home/fionalyh/miniconda3/envs/elt/bin/dbt test
 ```
 
@@ -142,26 +162,31 @@ Expected: `24 of 24 OK` on run, `53 of 53 PASS` on test.
 ## 7. Project Structure
 
 ```
-module2-olist-data-pipeline/
-├── data/
-│   └── raw/                          ← Local copies of the 9 CSVs
-├── docs/
-│   ├── architecture.md               ← Pipeline design and layer details
-│   ├── data_dictionary.md            ← Column definitions and staging mapping
-│   ├── data_quality_report.md        ← DQ findings with actual row counts
-│   └── schema_design.md              ← Star schema with sample queries
-├── notebooks/
-│   └── 01_data_understanding.ipynb   ← EDA + staging/DQ explanation
-└── README.md
-
-our_project/                          ← dbt project root
-├── dbt_project.yml
-├── models/
-│   ├── sources.yml                   ← All 9 BigQuery source tables declared
-│   ├── staging/                      ← 9 stg_* view models
-│   ├── data_quality/                 ← 9 dq_* table models
-│   └── star/                         ← 2 fact + 4 dim table models
-└── ...
+DS5-Team-5---Module-2-Assignment-Project/
+├── Data from Kaggle/                 ← Source CSVs (9 files)
+├── module2-olist-data-pipeline/
+│   ├── docs/
+│   │   ├── architecture.md           ← Pipeline design and layer details
+│   │   ├── data_dictionary.md        ← Column definitions and staging mapping
+│   │   ├── data_quality_report.md    ← DQ findings with actual row counts
+│   │   └── schema_design.md          ← Star schema with sample queries
+│   ├── notebooks/
+│   │   ├── 01_data_understanding.ipynb   ← EDA + staging/DQ explanation
+│   │   └── 02_star_schema_analysis.ipynb ← Star schema queries and analysis
+│   ├── requirements.txt
+│   └── README.md
+├── our_project/                      ← dbt project root
+│   ├── dbt_project.yml
+│   ├── profiles.yml
+│   ├── models/
+│   │   ├── sources.yml               ← All 9 BigQuery source tables declared
+│   │   ├── staging/                  ← 9 stg_* view models + schema.yml
+│   │   ├── data_quality/             ← 9 dq_* table models + schema.yml
+│   │   └── star/                     ← 2 fact + 4 dim table models + schema.yml
+│   └── target/                       ← dbt compiled artefacts (not committed)
+└── meltano-supabase/                 ← Meltano ELT project (tap-postgres → BigQuery)
+    ├── meltano.yml
+    └── plugins/
 ```
 
 ---
