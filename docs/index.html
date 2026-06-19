@@ -101,11 +101,13 @@ header p{font-size:0.8rem;opacity:0.8;margin-top:3px}
     </div>
     <div class="filter-group">
       <label>Highlight State</label>
-      <input id="map-search" type="text" placeholder="Type state code e.g. SP" class="filter-select" oninput="highlightState(this.value.toUpperCase())" style="text-transform:uppercase">
+      <select id="map-highlight-select" class="filter-select" autocomplete="off" onchange="highlightState(this.value)">
+        <option value="">— None —</option>
+      </select>
     </div>
     <div class="filter-group">
       <label>Show Only</label>
-      <select class="filter-select" onchange="filterMapGroup(this.value)">
+      <select id="map-group-select" class="filter-select" onchange="filterMapGroup(this.value)">
         <option value="all">All States</option>
         <option value="top3">Top 3</option>
         <option value="growth">Growth Targets</option>
@@ -117,16 +119,6 @@ header p{font-size:0.8rem;opacity:0.8;margin-top:3px}
   </div>
   <div id="map"></div>
   <br/>
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-    <span style="font-size:0.75rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px">Show</span>
-    <div class="btn-group" id="map-tbl-btns">
-      <button class="flt-btn"        onclick="setMapTableFilter('all',this)">All States</button>
-      <button class="flt-btn active" onclick="setMapTableFilter('top3',this)">Top 3</button>
-      <button class="flt-btn"        onclick="setMapTableFilter('growth',this)">Growth</button>
-      <button class="flt-btn"        onclick="setMapTableFilter('others',this)">Others</button>
-    </div>
-    <span id="map-tbl-count" style="font-size:0.75rem;color:#aaa;margin-left:4px"></span>
-  </div>
   <table class="state-table">
     <thead><tr>
       <th>State</th><th id="th-metric">Revenue (R$)</th>
@@ -145,18 +137,14 @@ header p{font-size:0.8rem;opacity:0.8;margin-top:3px}
   <div class="filter-bar">
     <div class="filter-group">
       <label>Year</label>
-      <div class="btn-group">
+      <div class="btn-group" id="rev-year-btns">
         <button class="flt-btn active" onclick="setRevFilter('year','all',this)">All Years</button>
-        <button class="flt-btn"        onclick="setRevFilter('year',2016,this)">2016</button>
-        <button class="flt-btn"        onclick="setRevFilter('year',2017,this)">2017</button>
-        <button class="flt-btn"        onclick="setRevFilter('year',2018,this)">2018</button>
       </div>
     </div>
     <div class="filter-group">
       <label>Customer State</label>
-      <select class="filter-select" onchange="setRevFilter('state',this.value,null)">
+      <select id="state-select-rev" class="filter-select" onchange="setRevFilter('state',this.value,null)">
         <option value="all">All States</option>
-        <option value="AC">AC — Acre</option><option value="AL">AL — Alagoas</option><option value="AM">AM — Amazonas</option><option value="AP">AP — Amapá</option><option value="BA">BA — Bahia</option><option value="CE">CE — Ceará</option><option value="DF">DF — Distrito Federal</option><option value="ES">ES — Espírito Santo</option><option value="GO">GO — Goiás</option><option value="MA">MA — Maranhão</option><option value="MG">MG — Minas Gerais</option><option value="MS">MS — Mato Grosso do Sul</option><option value="MT">MT — Mato Grosso</option><option value="PA">PA — Pará</option><option value="PB">PB — Paraíba</option><option value="PE">PE — Pernambuco</option><option value="PI">PI — Piauí</option><option value="PR">PR — Paraná</option><option value="RJ">RJ — Rio de Janeiro</option><option value="RN">RN — Rio Grande do Norte</option><option value="RO">RO — Rondônia</option><option value="RR">RR — Roraima</option><option value="RS">RS — Rio Grande do Sul</option><option value="SC">SC — Santa Catarina</option><option value="SE">SE — Sergipe</option><option value="SP">SP — São Paulo</option><option value="TO">TO — Tocantins</option>
       </select>
     </div>
     <button class="reset-btn" onclick="resetRevFilters()">↺ Reset</button>
@@ -226,17 +214,14 @@ header p{font-size:0.8rem;opacity:0.8;margin-top:3px}
   <div class="filter-bar">
     <div class="filter-group">
       <label>Year</label>
-      <div class="btn-group">
+      <div class="btn-group" id="del-year-btns">
         <button class="flt-btn active" onclick="setDelFilter('year','all',this)">All Years</button>
-        <button class="flt-btn"        onclick="setDelFilter('year',2017,this)">2017</button>
-        <button class="flt-btn"        onclick="setDelFilter('year',2018,this)">2018</button>
       </div>
     </div>
     <div class="filter-group">
       <label>Customer State</label>
-      <select class="filter-select" onchange="setDelFilter('state',this.value,null)">
+      <select id="state-select-del" class="filter-select" onchange="setDelFilter('state',this.value,null)">
         <option value="all">All States</option>
-        <option value="AC">AC — Acre</option><option value="AL">AL — Alagoas</option><option value="AM">AM — Amazonas</option><option value="AP">AP — Amapá</option><option value="BA">BA — Bahia</option><option value="CE">CE — Ceará</option><option value="DF">DF — Distrito Federal</option><option value="ES">ES — Espírito Santo</option><option value="GO">GO — Goiás</option><option value="MA">MA — Maranhão</option><option value="MG">MG — Minas Gerais</option><option value="MS">MS — Mato Grosso do Sul</option><option value="MT">MT — Mato Grosso</option><option value="PA">PA — Pará</option><option value="PB">PB — Paraíba</option><option value="PE">PE — Pernambuco</option><option value="PI">PI — Piauí</option><option value="PR">PR — Paraná</option><option value="RJ">RJ — Rio de Janeiro</option><option value="RN">RN — Rio Grande do Norte</option><option value="RO">RO — Rondônia</option><option value="RR">RR — Roraima</option><option value="RS">RS — Rio Grande do Sul</option><option value="SC">SC — Santa Catarina</option><option value="SE">SE — Sergipe</option><option value="SP">SP — São Paulo</option><option value="TO">TO — Tocantins</option>
       </select>
     </div>
     <div class="filter-group">
@@ -259,6 +244,33 @@ header p{font-size:0.8rem;opacity:0.8;margin-top:3px}
       <h3 id="days-title">Avg Actual Delivery Days by Review Score</h3>
       <div class="chart-wrap"><canvas id="chart-days"></canvas></div>
     </div>
+    <div class="chart-card full">
+      <h3 id="del-matrix-title">State Performance Matrix — % Late Delivery vs Avg Review Score</h3>
+      <p style="font-size:0.75rem;color:#888;margin:-4px 0 10px">Each point represents a state. Ideal quadrant: bottom-right (high review score, low late %). Top-left indicates delivery issues. Filtered by selected year.</p>
+      <div style="height:440px"><canvas id="chart-del-matrix"></canvas></div>
+      <div style="display:flex;align-items:center;gap:8px;margin:16px 0 12px;flex-wrap:wrap">
+        <span style="font-size:0.75rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px">Show</span>
+        <div class="btn-group" id="del-matrix-btns">
+          <button class="flt-btn active" onclick="setDelMatrixFilter('all',this)">All States</button>
+          <button class="flt-btn"        onclick="setDelMatrixFilter('top3',this)">Top 3</button>
+          <button class="flt-btn"        onclick="setDelMatrixFilter('growth',this)">Growth Targets</button>
+          <button class="flt-btn"        onclick="setDelMatrixFilter('others',this)">Others</button>
+        </div>
+        <span id="del-matrix-count" style="font-size:0.75rem;color:#aaa;margin-left:4px"></span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="state-table" id="del-matrix-table">
+          <thead><tr>
+            <th>State</th>
+            <th>Group</th>
+            <th>Avg Review Score</th>
+            <th>% Late Delivery</th>
+            <th>Total Orders</th>
+          </tr></thead>
+          <tbody id="del-matrix-tbody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -275,20 +287,12 @@ header p{font-size:0.8rem;opacity:0.8;margin-top:3px}
         <button class="flt-btn"        onclick="setGrowthFilter('group','others',this)">Others</button>
       </div>
     </div>
-    <div class="filter-group">
-      <label>Sort By</label>
-      <div class="btn-group">
-        <button class="flt-btn active" onclick="setGrowthFilter('sort','revenue',this)">Revenue</button>
-        <button class="flt-btn"        onclick="setGrowthFilter('sort','orders',this)">Orders</button>
-        <button class="flt-btn"        onclick="setGrowthFilter('sort','review',this)">Avg Review</button>
-      </div>
-    </div>
     <button class="reset-btn" onclick="resetGrowthFilters()">↺ Reset</button>
     <span class="filter-result" id="growth-result"></span>
   </div>
   <div class="chart-grid">
     <div class="chart-card">
-      <h3>Revenue Concentration (Last 12 Months)</h3>
+      <h3 id="pie-title">Revenue Concentration (Last 12 Months)</h3>
       <div class="chart-wrap"><canvas id="chart-pie"></canvas></div>
     </div>
     <div class="chart-card">
@@ -297,16 +301,6 @@ header p{font-size:0.8rem;opacity:0.8;margin-top:3px}
     </div>
     <div class="chart-card full" id="growth-table-card">
       <h3 id="growth-table-title">State Performance Summary</h3>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-        <span style="font-size:0.75rem;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:0.4px">Show</span>
-        <div class="btn-group" id="gt-filter-btns">
-          <button class="flt-btn"        onclick="setGTFilter('all',this)">All States</button>
-          <button class="flt-btn active" onclick="setGTFilter('top3',this)">Top 3</button>
-          <button class="flt-btn"        onclick="setGTFilter('growth',this)">Growth</button>
-          <button class="flt-btn"        onclick="setGTFilter('others',this)">Others</button>
-        </div>
-        <span id="gt-filter-count" style="font-size:0.75rem;color:#aaa;margin-left:4px"></span>
-      </div>
       <table class="state-table" id="growth-table">
         <thead><tr>
           <th>State</th><th>Revenue (last 12m)</th><th>Orders</th><th>Avg Review</th><th>Group</th>
@@ -319,15 +313,15 @@ header p{font-size:0.8rem;opacity:0.8;margin-top:3px}
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:8px">
         <div style="background:#e3f2fd;padding:14px;border-radius:6px;border-top:3px solid #1565c0">
           <div style="font-weight:700;color:#1565c0;margin-bottom:6px">1 · Market Expansion</div>
-          <div style="color:#333">Continue strengthening presence in Top 3 high revenue intensity and low market gap index markets.</div>
+          <div id="rec-1-text" style="color:#333">Loading…</div>
         </div>
         <div style="background:#e8f5e9;padding:14px;border-radius:6px;border-top:3px solid #2e7d32">
           <div style="font-weight:700;color:#2e7d32;margin-bottom:6px">2 · Capture New Markets</div>
-          <div style="color:#333">Target the underserved markets based on GDP size. Projected R$1.5M additional revenue.</div>
+          <div id="rec-2-text" style="color:#333">Loading…</div>
         </div>
         <div style="background:#fff3e0;padding:14px;border-radius:6px;border-top:3px solid #e65100">
           <div style="font-weight:700;color:#e65100;margin-bottom:6px">3 · Product Budget Shift</div>
-          <div style="color:#333">Focus on "Health &amp; Beauty", "Watches &amp; Gifts", "Bed, Bath &amp; Table" to maximise opportunities.</div>
+          <div id="rec-3-text" style="color:#333">Loading…</div>
         </div>
       </div>
     </div>
@@ -480,15 +474,7 @@ function getLegendHTML(metric) {
     <div style="margin-top:5px;font-size:0.7rem;color:#888">Circle size ∝ metric value</div>`;
 }
 
-let mapTableFilter = 'top3';
 let _mapTableData = [];
-
-function setMapTableFilter(val, btn) {
-  mapTableFilter = val;
-  document.querySelectorAll('#map-tbl-btns .flt-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderStateTableRows();
-}
 
 function renderStateTable(data) {
   _mapTableData = data;
@@ -496,13 +482,7 @@ function renderStateTable(data) {
 }
 
 function renderStateTableRows() {
-  let filtered = _mapTableData;
-  if(mapTableFilter === 'top3')   filtered = _mapTableData.filter(d => TOP3.includes(d.state));
-  if(mapTableFilter === 'growth') filtered = _mapTableData.filter(d => GROWTH.includes(d.state));
-  if(mapTableFilter === 'others') filtered = _mapTableData.filter(d => !TOP3.includes(d.state) && !GROWTH.includes(d.state));
-
-  const countEl = document.getElementById('map-tbl-count');
-  if(countEl) countEl.textContent = filtered.length + ' of ' + _mapTableData.length + ' states';
+  const filtered = _mapTableData;
 
   // Hide the fixed column that duplicates the active metric
   const showOrders = mapF.metric !== 'total_orders';
@@ -539,10 +519,10 @@ function highlightState(s) { mapF.search=s; renderMap(); }
 function filterMapGroup(g) { mapF.group=g; renderMap(); }
 function resetMapFilters() {
   mapF={metric:'total_revenue',search:'',group:'all'};
-  document.getElementById('map-search').value='';
+  document.getElementById('map-highlight-select').value='';
   document.querySelectorAll('#tab-map .flt-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('mb-revenue').classList.add('active');
-  document.querySelector('#tab-map .filter-select').value='all';
+  document.getElementById('map-group-select').value='all';
   renderMap();
 }
 
@@ -614,9 +594,27 @@ function renderGrowthMatrixTable() {
   const stateRev = {};
   rows.forEach(r => { stateRev[r.state] = (stateRev[r.state] || 0) + r.total_revenue; });
 
-  // Merge with precomputed GDP metrics from GROWTH_MATRIX
+  // Recalculate intensity and gap dynamically from year-filtered revenue
+  const _totalGDP    = GROWTH_MATRIX.reduce((s,d)=>s+(d.estimated_gdp||0),0);
+  const _totalDynRev = GROWTH_MATRIX.reduce((s,d)=>s+(stateRev[d.state]||0),0);
+
   const tableData = GROWTH_MATRIX
-    .map(d => ({...d, dyn_revenue: stateRev[d.state] || 0}))
+    .map(d => {
+      const dyn_rev = stateRev[d.state] || 0;
+      const gdp     = d.estimated_gdp || 0;
+      const dyn_intensity = gdp > 0
+        ? +(dyn_rev / (gdp / 1_000_000)).toFixed(2)
+        : 0;
+      const dyn_gap = (_totalDynRev > 0 && _totalGDP > 0)
+        ? +((gdp / _totalGDP * 100) - (dyn_rev / _totalDynRev * 100)).toFixed(2)
+        : d.market_gap_index;
+      return {
+        ...d,
+        dyn_revenue:      dyn_rev,
+        revenue_intensity: dyn_intensity,   // override with year-filtered value
+        market_gap_index:  dyn_gap,         // override with year-filtered value
+      };
+    })
     .filter(d => d.dyn_revenue > 0)
     .sort((a, b) => b.market_gap_index - a.market_gap_index);
 
@@ -744,7 +742,7 @@ function updateRevCharts() {
   const slbl  = revF.state==='all'?'All States':revF.state;
   document.getElementById('monthly-title').textContent = `Monthly Revenue & Orders — ${slbl}, ${label}`;
   document.getElementById('cats-title').textContent    = `Top ${revF.topN} Categories — ${slbl}, ${label}`;
-  document.getElementById('state-rev-title').textContent = `Revenue by State (Top 15) — ${label}`;
+  document.getElementById('state-rev-title').textContent = `Revenue by State (Top 15) — ${slbl}, ${label}`;
   document.getElementById('rev-result').textContent = `${mData.length} months · ${cData.length} categories`;
 
   makeChart('chart-monthly',{
@@ -784,7 +782,7 @@ function updateRevCharts() {
     data:{
       labels:sData.map(d=>d.state),
       datasets:[{label:'Revenue',data:sData.map(d=>d.total_revenue),
-        backgroundColor:sData.map(d=>TOP3.includes(d.state)?'#0d47a1':GROWTH.includes(d.state)?'#2e7d32':'#64b5f6')}]
+        backgroundColor:sData.map(d=>revF.state!=='all'&&d.state===revF.state?'#e65100':TOP3.includes(d.state)?'#0d47a1':GROWTH.includes(d.state)?'#2e7d32':'#64b5f6')}]
     },
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>'R$ '+ctx.raw.toLocaleString()}}},
@@ -804,9 +802,10 @@ function setRevFilter(key, val, btn) {
 }
 function resetRevFilters() {
   revF={year:'all',state:'all',topN:10};
+  gmTableFilter='top3';
   document.querySelectorAll('#tab-revenue .btn-group .flt-btn').forEach(b=>{
     b.classList.remove('active');
-    if(b.textContent==='All Years'||b.textContent==='10') b.classList.add('active');
+    if(['All Years','10','Top 3'].includes(b.textContent.trim())) b.classList.add('active');
   });
   document.querySelectorAll('#tab-revenue .filter-select').forEach(s=>s.value='all');
   if(inited['revenue']) updateRevCharts();
@@ -816,6 +815,29 @@ function resetRevFilters() {
 // DELIVERY TAB
 // ══════════════════════════════════════════════════════════════════════════════
 let delF = {year:'all', state:'all', minOrders:0};
+let delMatrixFilter = 'all';
+
+function getStateDelivScatterData() {
+  let rows = DELIV_DET;
+  if(delF.year !== 'all') rows = rows.filter(r => r.year === delF.year);
+  const stateMap = {};
+  rows.forEach(r => {
+    const s = r.state;
+    if(!stateMap[s]) stateMap[s] = {state:s, late_orders:0, total_orders:0, sum_score:0};
+    const late = Math.round(r.pct_late / 100 * r.order_count);
+    stateMap[s].late_orders += late;
+    stateMap[s].total_orders += r.order_count;
+    stateMap[s].sum_score += r.review_score * r.order_count;
+  });
+  return Object.values(stateMap)
+    .filter(d => d.total_orders >= Math.max(10, delF.minOrders))
+    .map(d => ({
+      state: d.state,
+      x: +(d.sum_score / d.total_orders).toFixed(2),
+      y: +(d.late_orders / d.total_orders * 100).toFixed(1),
+      order_count: d.total_orders
+    }));
+}
 
 function getDelivData() {
   let rows = DELIV_DET;
@@ -849,6 +871,7 @@ function updateDelCharts() {
   const slbl  = delF.state==='all'?'All States':delF.state;
   document.getElementById('late-title').textContent = `% Late by Review Score — ${slbl}, ${label}`;
   document.getElementById('days-title').textContent = `Avg Delivery Days by Review Score — ${slbl}, ${label}`;
+  document.getElementById('del-matrix-title').textContent = `State Performance Matrix — % Late Delivery vs Avg Review Score (${label})`;
   const totalOrds = data.reduce((s,d)=>s+d.order_count,0);
   document.getElementById('del-result').textContent = `${data.length} score bands · ${totalOrds.toLocaleString()} orders`;
 
@@ -866,12 +889,100 @@ function updateDelCharts() {
 
   makeChart('chart-days',{
     type:'bar',
-    data:{labels:lbls,datasets:[{label:'Avg Days',data:data.map(d=>d.avg_days),backgroundColor:cols.slice().reverse()}]},
+    data:{labels:lbls,datasets:[{label:'Avg Days',data:data.map(d=>d.avg_days),backgroundColor:cols}]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.raw+' days'}}},
       scales:{y:{ticks:{callback:v=>v+' days'}}}
     }
   });
+
+  renderDelMatrix();
+}
+
+function setDelMatrixFilter(val, btn) {
+  delMatrixFilter = val;
+  document.querySelectorAll('#del-matrix-btns .flt-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderDelMatrix();
+}
+
+function renderDelMatrix() {
+  const allData = getStateDelivScatterData();
+  let filtered = allData;
+  if(delMatrixFilter === 'top3')   filtered = allData.filter(d => TOP3.includes(d.state));
+  if(delMatrixFilter === 'growth') filtered = allData.filter(d => GROWTH.includes(d.state));
+  if(delMatrixFilter === 'others') filtered = allData.filter(d => !TOP3.includes(d.state) && !GROWTH.includes(d.state));
+
+  const countEl = document.getElementById('del-matrix-count');
+  if(countEl) countEl.textContent = filtered.length + ' of ' + allData.length + ' states';
+
+  const top3S   = filtered.filter(d => TOP3.includes(d.state));
+  const growthS = filtered.filter(d => GROWTH.includes(d.state));
+  const otherS  = filtered.filter(d => !TOP3.includes(d.state) && !GROWTH.includes(d.state));
+
+  const delMatrixLabelPlugin = {
+    id: 'delMatrixLabels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      chart.data.datasets.forEach((ds, di) => {
+        chart.getDatasetMeta(di).data.forEach((pt, pi) => {
+          ctx.save();
+          ctx.font = 'bold 10px Segoe UI,Arial,sans-serif';
+          ctx.fillStyle = '#1a237e';
+          ctx.fillText(ds.data[pi].state, pt.x + 8, pt.y - 4);
+          ctx.restore();
+        });
+      });
+    }
+  };
+  makeChart('chart-del-matrix', {
+    type: 'scatter',
+    data: {
+      datasets: [
+        {label:'Top 3',         data:top3S,   backgroundColor:'rgba(13,71,161,0.85)',   pointRadius:10, pointHoverRadius:13},
+        {label:'Growth Targets',data:growthS, backgroundColor:'rgba(27,94,32,0.85)',    pointRadius:10, pointHoverRadius:13},
+        {label:'Others',        data:otherS,  backgroundColor:'rgba(130,130,130,0.55)', pointRadius:7,  pointHoverRadius:10},
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins: {
+        legend:{position:'top', labels:{font:{size:13}, padding:16}},
+        tooltip:{callbacks:{label:ctx=>{
+          const d=ctx.raw;
+          return `${d.state}  ·  Avg Review: ${d.x}  ·  Late: ${d.y}%  ·  ${d.order_count.toLocaleString()} orders`;
+        }}}
+      },
+      scales: {
+        x:{title:{display:true, text:'Avg Review Score (1–5)', font:{size:12}}, min:1, max:5, grid:{color:'rgba(0,0,0,0.06)'}},
+        y:{title:{display:true, text:'% Late Delivery', font:{size:12}}, ticks:{callback:v=>v+'%'}, grid:{color:'rgba(0,0,0,0.06)'}}
+      }
+    },
+    plugins: [delMatrixLabelPlugin]
+  });
+
+  // Breakdown table
+  const tbody = document.getElementById('del-matrix-tbody');
+  if(tbody) {
+    const sorted = [...filtered].sort((a,b) => b.y - a.y);
+    tbody.innerHTML = sorted.map(d => {
+      const badge = TOP3.includes(d.state)
+        ? '<span class="badge b-top">Top 3</span>'
+        : GROWTH.includes(d.state)
+          ? '<span class="badge b-grow">Growth</span>'
+          : '<span class="badge b-other">Other</span>';
+      const lateColor = d.y > 30 ? 'color:#b71c1c;font-weight:700'
+                      : d.y > 15 ? 'color:#e65100;font-weight:600'
+                      : 'color:#2e7d32;font-weight:600';
+      return `<tr>
+        <td><b>${d.state}</b></td>
+        <td>${badge}</td>
+        <td>${d.x} / 5</td>
+        <td><span style="${lateColor}">${d.y}%</span></td>
+        <td>${d.order_count.toLocaleString()}</td>
+      </tr>`;
+    }).join('');
+  }
 }
 
 function setDelFilter(key,val,btn) {
@@ -881,6 +992,7 @@ function setDelFilter(key,val,btn) {
 }
 function resetDelFilters() {
   delF={year:'all',state:'all',minOrders:0};
+  delMatrixFilter='all';
   document.querySelectorAll('#tab-delivery .filter-select').forEach(s=>s.value='all');
   document.querySelectorAll('#tab-delivery .btn-group').forEach(g=>{
     g.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('active'));
@@ -892,7 +1004,7 @@ function resetDelFilters() {
 // ══════════════════════════════════════════════════════════════════════════════
 // GROWTH TAB
 // ══════════════════════════════════════════════════════════════════════════════
-let gF = {group:'all', sort:'revenue'};
+let gF = {group:'all'};
 let PROJ = {};
 
 function getGapRows() {
@@ -904,8 +1016,7 @@ function getGapRows() {
   if(gF.group==='top3')   rows=rows.filter(r=>TOP3.includes(r.state));
   if(gF.group==='growth') rows=rows.filter(r=>GROWTH.includes(r.state));
   if(gF.group==='others') rows=rows.filter(r=>!TOP3.includes(r.state)&&!GROWTH.includes(r.state));
-  const key = gF.sort==='orders'?'total_orders':gF.sort==='review'?'avg_review':'total_revenue';
-  rows.sort((a,b)=>b[key]-a[key]);
+  rows.sort((a,b)=>b.total_revenue-a.total_revenue);
   return rows;
 }
 
@@ -915,14 +1026,33 @@ function updateGrowthCharts() {
   document.getElementById('growth-result').textContent = `${rows.length} states`;
   document.getElementById('growth-table-title').textContent = `State Performance Summary — ${{all:'All',top3:'Top 3',growth:'Growth Targets',others:'Others'}[gF.group]}`;
 
-  // Chart-Pie: last-12m revenue split
-  const top3Rev   = allGap.filter(d=>TOP3.includes(d.state)).reduce((s,d)=>s+d.total_revenue,0);
-  const growthRev = allGap.filter(d=>GROWTH.includes(d.state)).reduce((s,d)=>s+d.total_revenue,0);
-  const restRev   = allGap.reduce((s,d)=>s+d.total_revenue,0)-top3Rev-growthRev;
+  // Chart-Pie: revenue split — adapts to gF.group
+  let pieLabels, pieData, pieColors, pieTitle;
+  if (gF.group === 'all') {
+    pieTitle = 'Revenue Concentration (Last 12 Months)';
+    const top3Rev   = allGap.filter(d=>TOP3.includes(d.state)).reduce((s,d)=>s+d.total_revenue,0);
+    const growthRev = allGap.filter(d=>GROWTH.includes(d.state)).reduce((s,d)=>s+d.total_revenue,0);
+    const restRev   = allGap.reduce((s,d)=>s+d.total_revenue,0)-top3Rev-growthRev;
+    pieLabels = [TOP3.join('+')+' (Top 3)', GROWTH.join('+')+' (Growth)', 'Other States'];
+    pieData   = [top3Rev, growthRev, restRev];
+    pieColors = ['#0d47a1','#2e7d32','#b0bec5'];
+  } else {
+    const groupNames = {top3:'Top 3',growth:'Growth Targets',others:'Others'};
+    pieTitle = `Revenue Breakdown — ${groupNames[gF.group]}`;
+    pieLabels = rows.map(d=>d.state);
+    pieData   = rows.map(d=>d.total_revenue);
+    const palettes = {
+      top3:   ['#0d47a1','#1565c0','#1976d2'],
+      growth: ['#1b5e20','#2e7d32','#388e3c','#43a047','#66bb6a'],
+      others: ['#37474f','#455a64','#546e7a','#607d8b','#78909c','#90a4ae','#b0bec5','#cfd8dc']
+    };
+    const pal = palettes[gF.group] || palettes.others;
+    pieColors = rows.map((_,i) => pal[i % pal.length]);
+  }
+  document.getElementById('pie-title').textContent = pieTitle;
   makeChart('chart-pie',{
     type:'doughnut',
-    data:{labels:[TOP3.join('+')+' (Top 3)',GROWTH.join('+')+' (Growth)','Other States'],
-      datasets:[{data:[top3Rev,growthRev,restRev],backgroundColor:['#0d47a1','#2e7d32','#b0bec5'],borderWidth:2,borderColor:'#fff'}]},
+    data:{labels:pieLabels, datasets:[{data:pieData,backgroundColor:pieColors,borderWidth:2,borderColor:'#fff'}]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{tooltip:{callbacks:{label:ctx=>'R$ '+ctx.raw.toLocaleString()}}}
     }
@@ -948,21 +1078,8 @@ function updateGrowthCharts() {
   renderGrowthTableRows();
 }
 
-let gtTableFilter = 'top3';
-function setGTFilter(val, btn) {
-  gtTableFilter = val;
-  document.querySelectorAll('#gt-filter-btns .flt-btn').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  renderGrowthTableRows();
-}
 function renderGrowthTableRows() {
-  const allRows = window._gtAllRows || [];
-  let filtered = allRows;
-  if(gtTableFilter === 'top3')   filtered = allRows.filter(r => TOP3.includes(r.state));
-  if(gtTableFilter === 'growth') filtered = allRows.filter(r => GROWTH.includes(r.state));
-  if(gtTableFilter === 'others') filtered = allRows.filter(r => !TOP3.includes(r.state) && !GROWTH.includes(r.state));
-  const countEl = document.getElementById('gt-filter-count');
-  if(countEl) countEl.textContent = filtered.length + ' of ' + allRows.length + ' states';
+  const filtered = window._gtAllRows || [];
   const tb = document.getElementById('growth-tbody');
   tb.innerHTML = filtered.map(r => {
     const badge = TOP3.includes(r.state) ? `<span class="badge b-top">Top 3</span>`
@@ -979,11 +1096,10 @@ function setGrowthFilter(key,val,btn) {
   if(inited['growth']) updateGrowthCharts();
 }
 function resetGrowthFilters() {
-  gF={group:'all',sort:'revenue'};
-  document.querySelectorAll('#tab-growth .btn-group').forEach(g=>{
-    g.querySelectorAll('.flt-btn').forEach(b=>b.classList.remove('active'));
-    const first=g.querySelector('.flt-btn');if(first)first.classList.add('active');
-  });
+  gF={group:'all'};
+  document.querySelectorAll('#tab-growth .btn-group .flt-btn').forEach(b=>b.classList.remove('active'));
+  const firstBtn=document.querySelector('#tab-growth .btn-group .flt-btn');
+  if(firstBtn) firstBtn.classList.add('active');
   if(inited['growth']) updateGrowthCharts();
 }
 
@@ -1019,8 +1135,8 @@ async function initDashboard() {
     // GROWTH: top 5 states with positive market gap (GDP share > revenue share = untapped potential)
     GROWTH = [...matrix].filter(d=>d.market_gap_index>0).sort((a,b)=>b.market_gap_index-a.market_gap_index).slice(0,5).map(d=>d.state);
     // Update dropdown option labels to reflect dynamic TOP3/GROWTH state lists
-    document.querySelectorAll('option[value="top3"]').forEach(el=>el.textContent=`Top 3 (${TOP3.join(', ')})`);
-    document.querySelectorAll('option[value="growth"]').forEach(el=>el.textContent=`Growth Targets (${GROWTH.join(', ')})`);
+    document.querySelectorAll('option[value="top3"]').forEach(el=>{ if(!el.closest('#map-group-select')) el.textContent=`Top 3 (${TOP3.join(', ')})`; });
+    document.querySelectorAll('option[value="growth"]').forEach(el=>{ if(!el.closest('#map-group-select')) el.textContent=`Growth Targets (${GROWTH.join(', ')})`; });
     // PROJ: projected revenue if each growth state fully closes its market gap
     // formula: current_revenue + (market_gap_index% × total national revenue)
     const _totalRev = matrix.reduce((s,d)=>s+d.total_revenue,0);
@@ -1029,6 +1145,54 @@ async function initDashboard() {
       const d=matrix.find(m=>m.state===s);
       if(d) PROJ[s]=Math.round(d.total_revenue+(d.market_gap_index/100)*_totalRev);
     });
+    // Populate year buttons dynamically from data
+    const _revYears = [...new Set(monthly.map(r=>r.year))].sort();
+    const _revYearBtns = document.getElementById('rev-year-btns');
+    if(_revYearBtns) _revYearBtns.innerHTML =
+      `<button class="flt-btn active" onclick="setRevFilter('year','all',this)">All Years</button>`
+      + _revYears.map(y=>`<button class="flt-btn" onclick="setRevFilter('year',${y},this)">${y}</button>`).join('');
+
+    const _delYears = [...new Set(deliv.map(r=>r.year))].sort();
+    const _delYearBtns = document.getElementById('del-year-btns');
+    if(_delYearBtns) _delYearBtns.innerHTML =
+      `<button class="flt-btn active" onclick="setDelFilter('year','all',this)">All Years</button>`
+      + _delYears.map(y=>`<button class="flt-btn" onclick="setDelFilter('year',${y},this)">${y}</button>`).join('');
+
+    // Populate state dropdowns from STATE_DATA
+    const _stateOpts = [...state]
+      .sort((a,b)=>a.state.localeCompare(b.state))
+      .map(d=>`<option value="${d.state}">${d.state} — ${d.state_name}</option>`)
+      .join('');
+    ['state-select-rev','state-select-del'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.innerHTML='<option value="all">All States</option>'+_stateOpts;
+    });
+    const _hlSelect=document.getElementById('map-highlight-select');
+    if(_hlSelect){ _hlSelect.innerHTML='<option value="">— None —</option>'+_stateOpts; _hlSelect.value=''; }
+    // Defer reset past browser form-state restoration (fires after JS synchronous run)
+    setTimeout(()=>{
+      const hl=document.getElementById('map-highlight-select'); if(hl) hl.value='';
+      const mg=document.getElementById('map-group-select'); if(mg) mg.value='all';
+    }, 0);
+    // Dynamic strategic recommendations
+    const _additionalRev = GROWTH.reduce((sum,s)=>{
+      const d=matrix.find(m=>m.state===s);
+      return sum+(PROJ[s]||0)-(d?d.total_revenue:0);
+    },0);
+    const _revFmt = _additionalRev>=1e6
+      ? 'R$'+(_additionalRev/1e6).toFixed(1)+'M'
+      : 'R$'+Math.round(_additionalRev/1e3)+'K';
+    const _catTotals={};
+    cats.forEach(r=>{_catTotals[r.category]=(_catTotals[r.category]||0)+r.total_revenue;});
+    const _topCats = Object.entries(_catTotals)
+      .sort((a,b)=>b[1]-a[1]).slice(0,3)
+      .map(([c])=>c.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()));
+    document.getElementById('rec-1-text').textContent =
+      `Continue strengthening presence in ${TOP3.join(', ')} — top markets by revenue intensity with low market gap index.`;
+    document.getElementById('rec-2-text').textContent =
+      `Target the underserved markets (${GROWTH.join(', ')}) based on GDP size. Projected ${_revFmt} additional revenue.`;
+    document.getElementById('rec-3-text').textContent =
+      `Focus on "${_topCats[0]}", "${_topCats[1]}", "${_topCats[2]}" to maximise opportunities.`;
   } catch(e) {
     if(overlay) overlay.innerHTML = '<p style="color:#fff;font-size:1.1rem">Error loading data. Please refresh the page.</p>';
     console.error(e);
@@ -1045,6 +1209,11 @@ async function initDashboard() {
   overlay.style.display = 'none';
 }
 initDashboard();
+// Reset map dropdowns on bfcache restore (browser back/forward)
+window.addEventListener('pageshow', function() {
+  const hl=document.getElementById('map-highlight-select'); if(hl) hl.value='';
+  const mg=document.getElementById('map-group-select'); if(mg) mg.value='all';
+});
 </script>
 </body>
 </html>
